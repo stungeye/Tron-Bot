@@ -44,7 +44,8 @@ class Map
           #read the representation of the board
           lines = []
           @height.times do
-              lines += [$stdin.readline("\n").strip]
+              #lines += [$stdin.readline("\n").strip]
+              lines += [$stdin.readline("\n").chomp]
           end
           board = lines.join("")
           
@@ -130,6 +131,10 @@ class Map
       $stdout.flush
       
   end
+  
+  def get_walls
+    @walls
+  end
 	
   def rel(direction, origin = nil)
     origin = @my_position if origin.nil?
@@ -151,6 +156,18 @@ class Map
   
   def adjacent(origin)
     DIRECTIONS.inject([]) { |adjacents, direction| adjacents << rel(direction, origin) }
+  end
+  
+  def valid_moves(origin = nil)
+    origin = @my_position if origin.nil?
+    x, y   = origin
+    
+    valid_moves = []
+    valid_moves << :NORTH if not wall?([x, y-1])
+    valid_moves << :SOUTH if not wall?([x, y+1])
+    valid_moves << :WEST  if not wall?([x-1, y])
+    valid_moves << :EAST  if not wall?([x+1, y])
+    valid_moves
   end
   
 end
