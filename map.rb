@@ -100,10 +100,10 @@ class Map
   end
   
   
-  def wall? (coordinates)
+  def wall? (coordinates, walls = @walls)
       x, y = coordinates
       return true if x < 0 or y < 0 or x >= @width or y >= @height
-      return @walls[x+@width*y]
+      return walls[x+@width*y]
   end
   
   def to_string()
@@ -142,13 +142,13 @@ class Map
     
     case direction
       when :NORTH
-        [y - 1, x]
+        [x, y - 1]
       when :SOUTH
-        [y + 1, x]
+        [x, y + 1]
       when :EAST
-        [y, x + 1]
+        [x + 1, y]
       when :WEST
-        [y, x - 1]
+        [x - 1, y]
       else
         raise InvalidMove;
     end
@@ -165,9 +165,48 @@ class Map
     valid_moves = []
     valid_moves << :NORTH if not wall?([x, y-1])
     valid_moves << :SOUTH if not wall?([x, y+1])
-    valid_moves << :WEST  if not wall?([x-1, y])
     valid_moves << :EAST  if not wall?([x+1, y])
+    valid_moves << :WEST  if not wall?([x-1, y])
     valid_moves
+  end
+  
+  
+  def flood_fill(move, walls)
+    if wall?(move, walls)
+      0
+    else
+      x, y = move
+      walls[x + @width * y] = true
+      adj = adjacent(move)
+      return 1 +
+        flood_fill(adj[0], walls) + 
+        flood_fill(adj[1], walls) + 
+        flood_fill(adj[2], walls) + 
+        flood_fill(adj[3], walls)
+    end
+  end
+  
+  def fill_count(move)
+    temp_walls = Array.new(@walls)
+    flood_fill(move, temp_walls)
+  end
+  
+   def fill_string(map, height, width)
+
+      out = ""
+      counter = 0
+              
+      height.times do
+          width.times do
+              out += map[counter] == true ? "#" : "-"
+              counter+=1
+          end
+          out += "\n"
+      end
+      
+      
+      puts out
+      
   end
   
 end

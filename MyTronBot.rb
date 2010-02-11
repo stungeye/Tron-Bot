@@ -15,27 +15,33 @@ class TronBot
   def makemove(map)
     valid_moves = map.valid_moves
     
+    #puts "Valid Moves:"
+    #p valid_moves
+    
     case valid_moves.size
       when 0
         move = :NORTH
       when 1
         move = valid_moves[0]
       else
-        move = weighted_choice(valid_moves, map)
+        move = weighted_choices(valid_moves, map)
     end
     
+    #puts "Moving: #{move}"
     map.make_move( move )
   end
   
-  def weighted_choice(valid_moves, map)
+ 
+  def weighted_choices(valid_moves, map)
     weight_group = {}
     possible_moves = []
     highest_weight = -1
 
+    
     valid_moves.each do |direction|
       dest = map.rel(direction)
-      weight = evaluate_move(dest, map)
-      weight_group[direction] = weight
+      weight = map.fill_count(dest)
+      #weight_group[direction] = weight
       if (weight > highest_weight)
         highest_weight = weight
         possible_moves = [direction]
@@ -43,15 +49,14 @@ class TronBot
         possible_moves << direction
       end
     end
+    #p weight_group
+    #p possible_moves
     
     possible_moves = valid_moves if possible_moves.size == 0
+    
     possible_moves[rand(possible_moves.size)]
   end
   
-  def evaluate_move(move, map)
-    adjacents  = map.adjacent(move)
-    4 - adjacents.inject(0) { |count, pos| map.wall?(pos) ? count + 1 : count }
-  end
   
   def initialize
     while(true)

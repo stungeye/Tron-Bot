@@ -31,34 +31,16 @@ class TronBot
     map.make_move( move )
   end
   
-  def wall_hug(valid_moves, map)
-    possible_moves = []
-
-    valid_moves.each do |direction|
-      dest = map.rel(direction)
-      adjacents = map.adjacent(dest)
-      wall_count = adjacents.inject(0) { |count, pos| map.wall?(pos) ? count + 1 : count }
-      if (wall_count != 4)
-        adjacents.each do |position|
-          if map.wall?(position)
-            possible_moves << direction
-          end
-        end
-      end
-    end
-    
-    possible_moves = valid_moves if possible_moves.size == 0
-    possible_moves[rand(possible_moves.size)]
-  end
-  
+ 
   def weighted_choices(valid_moves, map)
     weight_group = {}
     possible_moves = []
     highest_weight = -1
 
+    
     valid_moves.each do |direction|
       dest = map.rel(direction)
-      weight = evaluate_move(dest, map)
+      weight = map.fill_count(dest)
       weight_group[direction] = weight
       if (weight > highest_weight)
         highest_weight = weight
@@ -72,11 +54,7 @@ class TronBot
     possible_moves[rand(possible_moves.size)]
   end
   
-  def evaluate_move(move, map)
-    adjacents  = map.adjacent(move)
-    4 - adjacents.inject(0) { |count, pos| map.wall?(pos) ? count + 1 : count }
-  end
-    
+  
   def initialize
     while(true)
       map = Map.new()
