@@ -9,7 +9,7 @@
 class Map
 
   InvalidMove = Class.new(StandardError)
-  attr_reader :width, :height, :my_position, :opponent_position
+  attr_reader :width, :height, :my_position, :opponent_position, :opponent_unreachable
   DIRECTIONS = [:NORTH, :SOUTH, :EAST, :WEST]
   
   def initialize()
@@ -19,7 +19,7 @@ class Map
       @walls = []
       @my_position = [-1,-1]
       @opponent_position = [-1,-1]
-      
+      @opponent_unreachable = nil
       
       read_map
       
@@ -172,6 +172,7 @@ class Map
   
   
   def flood_fill(move, walls)
+    @opponent_unreachable &&= !opponent?(move)
     if wall?(move, walls)
       0
     else
@@ -186,7 +187,12 @@ class Map
     end
   end
   
+  def opponent?(position)
+    (position[0] == @opponent_position[0]) &&(position[1] == @opponent_position[1])
+  end
+  
   def fill_count(move)
+    @opponent_unreachable = true
     temp_walls = Array.new(@walls)
     flood_fill(move, temp_walls)
   end

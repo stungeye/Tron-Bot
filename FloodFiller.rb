@@ -1,6 +1,7 @@
 # wallHugger
 # Author: Wally Glutton
 # http://stungeye.com
+# Was ranking around 130 out of 475 on Feb 11th.
 
 require "map.rb"
 require "printing.rb"

@@ -30,7 +30,6 @@ class TronBot
     #puts "Moving: #{move}"
     map.make_move( move )
   end
-  
  
   def weighted_choices(valid_moves, map)
     weight_group = {}
