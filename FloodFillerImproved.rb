@@ -50,7 +50,7 @@ class TronBot
     end
     
     possible_moves = valid_moves if possible_moves.size == 0
-    if (map.opponent_unreachable)
+    if (map.opponent_unreachable?)
       possible_moves[0]
     else
       possible_moves[rand(possible_moves.size)]
